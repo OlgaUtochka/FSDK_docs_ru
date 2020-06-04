@@ -5,7 +5,7 @@
 В случае ошибки библиотека *libfacerec* выбрасывает объект исключения `pbio::Error`, поэтому возвращаемые значения всегда корректны и дополнительных проверок не требуется. Класс `pbio::Error` является производным от `std::exception`. Его метод `pbio::Error::what` возвращает строку, идентифицирующую ошибку. Его метод `pbio::Error::code` возвращает целый беззнаковый код исключения.
 
 Пример:
-```
+```cpp
 ...
 try
 {
@@ -25,7 +25,7 @@ catch(const pbio::Error &e)
 При возникновении ошибки выбрасывается исключение класса `com.vdt.face_recognition.sdk.SDKException`, производного от базового класса `java.lang.RuntimeException`. Его метод `com.vdt.face_recognition.sdk.SDKException.getMessage()` возвращает строку с описанием ошибки, а `com.vdt.face_recognition.sdk.SDKException.code()` возвращает целый беззнаковый код исключения.
 
 Пример:
-```
+```java
 ...
 try
 {
@@ -44,7 +44,7 @@ catch (SDKException e)
 При возникновении ошибки выбрасывается исключение класса `VDT.FaceRecognition.SDK.Error`, производного от `System.Exception`. Его свойство `VDT.FaceRecognition.SDK.Error.Message` возвращает строку с описанием ошибки, a метод `VDT.FaceRecognition.SDK.Error.Code` возвращает целый беззнаковый код исключения.
 
 Пример:
-```
+```cs
 ...
 try
 {
