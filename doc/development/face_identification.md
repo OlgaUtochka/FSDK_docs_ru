@@ -6,10 +6,10 @@ Face SDK содержит несколько методов идентифика
 * **6.7** – для real-time идентификации по видео на настольных платформах (x86)
 * **9.300, 9.1000** – для экспертных систем поиска лица по фото
 
-Для идентификации лиц необходимо создать объект `Recognizer`, вызвав метод `FacerecService.createRecognizer` с указанием файла конфигурации.
+Для идентификации лиц необходимо создать объект `Recognizer`, вызвав метод `FacerecService.createRecognizer` с указанием файла конфигурации.  
 
-Для создания компонента [Encoder](../components.md#encoder) для одного потока необходимо указать параметры `processing_threads_count=true`, `matching_threads_count=false`.
-Для создания компонента [MatcherDB](../components.md#matcherdb) для одного потока необходимо указать параметры `processing_threads_count=false`, `matching_threads_count=true`.
+Для создания компонента [Encoder](../components.md#encoder) для одного потока необходимо указать параметры `processing_threads_count=true`, `matching_threads_count=false`.  
+Для создания компонента [MatcherDB](../components.md#matcherdb) для одного потока необходимо указать параметры `processing_threads_count=false`, `matching_threads_count=true`.  
 
 На данный момент существуют следующие файлы конфигурации и методы распознавания:
 
