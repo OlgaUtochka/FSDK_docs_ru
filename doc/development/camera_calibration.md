@@ -30,6 +30,6 @@
 
 После успешной калибровки вы можете оценить результат коррекции дисторсии, вызвав метод `CameraCalibrator.undistort`. Если результат вас устроил, вы можете сохранить параметры калибровки с помощью метода `CameraCalibrator.saveCameraParameters`, или, в противном случае, добавить больше изображений и произвести калибровку еще раз.
 
-Чтобы начать калибровку заново, вызовите метод `CameraCalibrator::initCalibration`.
+Чтобы начать калибровку заново, вызовите метод `CameraCalibrator.initCalibration`.
 
 Пример использования *CameraCalibrator* см. в [test_calibration](../samples/cpp/test_calibration.md).
