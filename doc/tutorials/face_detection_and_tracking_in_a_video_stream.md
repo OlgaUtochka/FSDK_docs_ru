@@ -721,7 +721,7 @@ int main(int argc, char *argv[])
 
 26. Запустите проект. Должно появиться окно с изображением с камеры.
 
-_**Примечание:** При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи QImage::mirrored()._
+_**Примечание:** При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи `QImage::mirrored()`._
 
 <p align="center">
 <img width="600" src="../img/first_8.png"><br>
@@ -729,10 +729,11 @@ _**Примечание:** При запуске проекта на Windows с 
 
 ## Детектим и отслеживаем лица на видео
 
-Скачайте и распакуйте дистрибутив Face SDK, как это описано в пункте Приступая к работе. В корневой папке дистрибутива должны находиться папки bin и lib, соответствующие Вашей платформе.
-Для того, чтобы осуществлять детекцию и трекинг лиц на изображении с камеры, нам необходимо интегрировать Face SDK в наш проект. Указываем путь до корневой папки дистрибутива Face SDK (там находятся нужные нам заголовочные файлы) в переменной FACE_SDK_PATH в pro-файле проекта. Также указываем путь до папки include. В случае, если пути не прописаны, будет выводиться ошибка “Empty path to Face SDK”.
+1. Скачайте и распакуйте дистрибутив Face SDK, как это описано в пункте [Приступая к работе](../../README_ru.md#приступая-к-работе). В корневой папке дистрибутива должны находиться папки *bin* и *lib*, соответствующие Вашей платформе.
+2. Для того, чтобы осуществлять детекцию и трекинг лиц на изображении с камеры, нам необходимо интегрировать Face SDK в наш проект. Указываем путь до корневой папки дистрибутива Face SDK (там находятся нужные нам заголовочные файлы) в переменной `FACE_SDK_PATH` в pro-файле проекта. Также указываем путь до папки `include`. В случае, если пути не прописаны, будет выводиться ошибка *“Empty path to Face SDK”*.
 
-detection_and_tracking_with_video_worker.pro
+**detection_and_tracking_with_video_worker.pro**
+```cpp
 ...
 # Set path to FaceSDK root directory
 FACE_SDK_PATH =
@@ -742,24 +743,33 @@ isEmpty(FACE_SDK_PATH) {
 DEFINES += FACE_SDK_PATH=\\\"$$FACE_SDK_PATH\\\"
 INCLUDEPATH += $${FACE_SDK_PATH}/include
 ...
-Заметки
-При написании пути до Face SDK используйте слэш ("/").
-[Для Linux] Для сборки проекта добавляем в pro-файл следующую опцию:
+```
 
-detection_and_tracking_with_video_worker.pro
+_**Примечание:** При написании пути до Face SDK используйте слэш ("/")._
+
+3. [Для Linux] Для сборки проекта добавляем в pro-файл следующую опцию:
+
+**detection_and_tracking_with_video_worker.pro**
+```cpp
 ...
 unix: LIBS += -ldl
 ...
-Кроме того, требуется указать путь до библиотеки facerec и конфигурационных файлов. Создадим класс FaceSdkParameters для хранения конфигурации (Add New > C++ > C++ Header File > FaceSdkParameters) и используем его в MainWindow.
+```
 
-facesdkparameters.h
+4. Кроме того, требуется указать путь до библиотеки *facerec* и конфигурационных файлов. Создадим класс `FaceSdkParameters` для хранения конфигурации (**Add New > C++ > C++ Header File > FaceSdkParameters**) и используем его в `MainWindow`.
+
+**facesdkparameters.h**
+```cpp
 #include <string>
 // Обработка и настройки Face SDK
 struct FaceSdkParameters
 {
     std::string face_sdk_path = FACE_SDK_PATH;
 };
-mainwindow.h
+```
+
+**mainwindow.h**
+```cpp
 #include <QMainWindow>
 #include "facesdkparameters.h"
 ...
@@ -769,9 +779,12 @@ class MainWindow : public QMainWindow
     ...
     FaceSdkParameters _face_sdk_parameters;
 }
-Подключаем Face SDK: добавляем заголовочные файлы в mainwindow.h и метод initFaceSdkService для инициализации сервисов Face SDK. Создаем объект FacerecService – компонент для создания модулей Face SDK, вызывая статический метод FacerecService::createService, передаем путь до библиотеки и путь до директории с конфигурационными файлами в try-catch блоке, чтобы перехватить возможные исключения. В случае успешной инициализации функция initFaceSdkService вернет true, иначе появится окно с ошибкой и вернется false.
+```
 
-mainwindow.h
+5. Подключаем Face SDK: добавляем заголовочные файлы в `mainwindow.h` и метод `initFaceSdkService` для инициализации сервисов Face SDK. Создаем объект `FacerecService` – компонент для создания модулей Face SDK, вызывая статический метод `FacerecService::createService`, передаем путь до библиотеки и путь до директории с конфигурационными файлами в try-catch блоке, чтобы перехватить возможные исключения. В случае успешной инициализации функция `initFaceSdkService` вернет `true`, иначе появится окно с ошибкой и вернется `false`.
+
+**mainwindow.h**
+```cpp
 #include <facerec/libfacerec.h>
 class MainWindow : public QMainWindow
 {
@@ -783,7 +796,10 @@ class MainWindow : public QMainWindow
         pbio::FacerecService::Ptr _service;
         ...
 }
-mainwindow.cpp
+```
+
+**mainwindow.cpp**
+```cpp
 bool MainWindow::initFaceSdkService()
 {
     // Подключаем Face SDK
@@ -815,9 +831,12 @@ bool MainWindow::initFaceSdkService()
         tr("Try to change face sdk parameters."));
     return false;
 }
-В конструкторе MainWindow::MainWindow добавляем вызов инициализации сервиса. В случае ошибки выбрасываем исключение std::runtime_error.
+```
 
-mainwindow.cpp
+6. В конструкторе `MainWindow::MainWindow` добавляем вызов инициализации сервиса. В случае ошибки выбрасываем исключение `std::runtime_error`.
+
+**mainwindow.cpp**
+```cpp
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -829,9 +848,12 @@ ui(new Ui::MainWindow)
     }
     ...
 }
-Добавим передачу сервиса FacerecService и параметров Face SDK в конструктор ViewWindow, где они будут использованы для создания модуля трекинга VideoWorker. В поля класса сохраняем сервис и параметры.
+```
 
-mainwindow.cpp
+7. Добавим передачу сервиса `FacerecService` и параметров Face SDK в конструктор `ViewWindow`, где они будут использованы для создания модуля трекинга `VideoWorker`. В поля класса сохраняем сервис и параметры.
+
+**mainwindow.cpp**
+```cpp
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
 ui(new Ui::MainWindow)
@@ -843,7 +865,10 @@ ui(new Ui::MainWindow)
         _face_sdk_parameters));
     ...
 }
-viewwindow.h
+```
+
+**viewwindow.h**
+```cpp
 #include "facesdkparameters.h"
 #include <facerec/libfacerec.h>
 ...
@@ -861,7 +886,10 @@ class ViewWindow : public QWidget
         pbio::FacerecService::Ptr _service;
         FaceSdkParameters _face_sdk_parameters;
 };
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 ...
 ViewWindow::ViewWindow(
     QWidget *parent,
@@ -872,9 +900,12 @@ ui(new Ui::ViewWindow()),
 _service(service),
 _face_sdk_parameters(face_sdk_parameters)
 ...
-Модифицируем класс Worker для работы с Face SDK. Класс Worker будет принимать указатель на объект FacerecService и имя конфигурационного файла модуля трекинга. Класс Worker создает компонент VideoWorker из Face SDK, осуществляющий трекинг лиц, подает ему кадры и обрабатывает коллбэки, в которых приходят результаты трекинга. Реализуем конструктор – в нем создаем объект VideoWorker, указывая конфигурационный файл, метод распознавателя (в данном случае это пустая строка, т.к. распознавание лиц не используется), количество видеопотоков (в данном случае 1, т.к. используется только одна камера).
+```
 
-worker.h
+8. Модифицируем класс `Worker` для работы с Face SDK. Класс `Worker` будет принимать указатель на объект `FacerecService` и имя конфигурационного файла модуля трекинга. Класс `Worker` создает компонент `VideoWorker` из Face SDK, осуществляющий трекинг лиц, подает ему кадры и обрабатывает коллбэки, в которых приходят результаты трекинга. Реализуем конструктор – в нем создаем объект `VideoWorker`, указывая конфигурационный файл, метод распознавателя (в данном случае это пустая строка, т.к. распознавание лиц не используется), количество видеопотоков (в данном случае `1`, т.к. используется только одна камера).
+
+**worker.h**
+```cpp
 #include <facerec/libfacerec.h>
 class Worker
 {
@@ -888,7 +919,10 @@ class Worker
         ...
         pbio::VideoWorker::Ptr _video_worker;
 };
-worker.cpp
+```
+
+**worker.cpp**
+```cpp
 #include "worker.h"
 #include "videoframe.h"
 Worker::Worker(
@@ -903,11 +937,14 @@ Worker::Worker(
         0,   // processing_threads_count
         0);  // matching_threads_count
 }
-Заметки
-Помимо детекции и трекинга лиц объект VideoWorker может использоваться для распознавания лиц на нескольких потоках. В этом случае указывается метод распознавателя и потоки processing_threads_count и matching_threads_count.
-Подписываемся на коллбэки от класса VideoWorker – TrackingCallback (лицо найдено и отслеживается), TrackingLostCallback (потеря трекинга лица) – и удаляем их в деструкторе.
+```
 
-worker.h
+_**Примечание:** Помимо детекции и трекинга лиц объект `VideoWorker` может использоваться для распознавания лиц на нескольких потоках. В этом случае указывается метод распознавателя и потоки `processing_threads_count` и `matching_threads_count`._
+
+9. Подписываемся на коллбэки от класса `VideoWorker` – `TrackingCallback` (лицо найдено и отслеживается), `TrackingLostCallback` (потеря трекинга лица) – и удаляем их в деструкторе.
+
+**worker.h**
+```cpp
 class Worker
 {
     public:
@@ -926,7 +963,10 @@ class Worker
         int _tracking_callback_id;
         int _tracking_lost_callback_id;
 };
-worker.cpp
+```
+
+**worker.cpp**
+```cpp
 Worker::Worker(...)
 {
     ...
@@ -944,9 +984,12 @@ Worker::~Worker()
     _video_worker->removeTrackingCallback(_tracking_callback_id);
     _video_worker->removeTrackingLostCallback(_tracking_lost_callback_id);
 }
-Для обработки исключений подключаем заголовочный файл cassert. В коллбэке TrackingCallback результат приходит в виде структуры TrackingCallbackData, которая хранит данные обо всех отслеживаемых лицах. Вывод превью синхронизируется с выводом результата. Мы не можем сразу вывести кадр, который отдается в VideoWorker, потому что он будет обработан чуть позже. Поэтому кадры складываются в очередь, и при получении результата мы можем найти кадр, который соответствует этому результату. Часть кадров может быть пропущена объектом VideoWorker при большой нагрузке, поэтому не всегда для каждого кадра есть результат. В алгоритме ниже из очереди извлекается изображение, соответствующее последнему полученному результату. Сохраняем найденные лица для кадра, чтобы потом их использовать при визуализации. Для синхронизации изменения общих данных в TrackingCallback и TrackingLostCallback используются мьютексы std::mutex.
+```
 
-worker.h
+10. Для обработки исключений подключаем заголовочный файл `cassert`. В коллбэке `TrackingCallback` результат приходит в виде структуры `TrackingCallbackData`, которая хранит данные обо всех отслеживаемых лицах. Вывод превью синхронизируется с выводом результата. Мы не можем сразу вывести кадр, который отдается в `VideoWorker`, потому что он будет обработан чуть позже. Поэтому кадры складываются в очередь, и при получении результата мы можем найти кадр, который соответствует этому результату. Часть кадров может быть пропущена объектом `VideoWorker` при большой нагрузке, поэтому не всегда для каждого кадра есть результат. В алгоритме ниже из очереди извлекается изображение, соответствующее последнему полученному результату. Сохраняем найденные лица для кадра, чтобы потом их использовать при визуализации. Для синхронизации изменения общих данных в `TrackingCallback` и `TrackingLostCallback` используются мьютексы `std::mutex`.
+
+**worker.h**
+```cpp
 #include <cassert>
 ...
 class Worker
@@ -974,7 +1017,10 @@ class Worker
         };
     ...
 };
-worker.cpp
+```
+
+**worker.cpp**
+```cpp
 ...
 // static
 void Worker::TrackingCallback(
@@ -1033,9 +1079,12 @@ void Worker::TrackingCallback(
         }
     }
 }
-Реализуем коллбэк TrackingLostCallback, в котором помечаем, что трекаемое лицо пропало из кадра.
+```
 
-worker.cpp
+11. Реализуем коллбэк `TrackingLostCallback`, в котором помечаем, что трекаемое лицо пропало из кадра.
+
+**worker.cpp**
+```cpp
 ...
 // static
 void Worker::TrackingLostCallback(
@@ -1054,12 +1103,102 @@ void Worker::TrackingLostCallback(
         face.lost = true;
     }
 }
-Объект VideoWorker принимает кадры через интерфейс pbio::IRawImage. Создадим заголовочный файл VideoFrame: Add New > C++ > C++ Header File > VideoFrame. Подключаем интерфейс pbio::IRawImage в файле videoframe.h и реализуем этот интерфейс для класса QImage. Интерфейс pbio::IRawImage позволяет получить указатель на данные изображения, его формат, высоту и ширину.
+```
 
-videoframe.h
-В методе addFrame подаем кадры в VideoWorker. Если при обработке коллбэков возникают исключения, они выбрасываются повторно в методе checkExceptions. Для хранения кадров заведем очередь _frames, в которую будем складывать id кадра и соответствующее изображение, чтобы в коллбэке TrackingCallback найти кадр, соответствующий результату обработки. Для синхронизации изменения общих данных также используются мьютексы std::mutex.
+12. Объект `VideoWorker` принимает кадры через интерфейс `pbio::IRawImage`. Создадим заголовочный файл `VideoFrame`: **Add New > C++ > C++ Header File > VideoFrame**. Подключаем интерфейс `pbio::IRawImage` в файле `videoframe.h` и реализуем этот интерфейс для класса `QImage`. Интерфейс `pbio::IRawImage` позволяет получить указатель на данные изображения, его формат, высоту и ширину.
 
-worker.h
+**videoframe.h**
+
+<details>
+  <summary>Click to expand</summary>
+	
+```cpp
+#include "qcameracapture.h"
+#include <pbio/IRawImage.h>
+
+class VideoFrame : public pbio::IRawImage
+{
+public:
+	VideoFrame(){}
+
+	virtual ~VideoFrame(){}
+
+	virtual const unsigned char* data() const throw();
+
+	virtual int32_t width() const throw();
+
+	virtual int32_t height() const throw();
+
+	virtual int32_t format() const throw();
+
+	QCameraCapture::FramePtr& frame();
+
+	const QCameraCapture::FramePtr& frame() const;
+
+private:
+	QCameraCapture::FramePtr _frame;
+};
+
+
+inline
+const unsigned char* VideoFrame::data() const throw()
+{
+	if(_frame->isNull() || _frame->size().isEmpty())
+	{
+		return NULL;
+	}
+
+	return _frame->bits();
+}
+
+inline
+int32_t VideoFrame::width() const throw()
+{
+	return _frame->width();
+}
+
+
+inline
+int32_t VideoFrame::height() const throw()
+{
+	return _frame->height();
+}
+
+
+inline
+int32_t VideoFrame::format() const throw()
+{
+	if(_frame->format() == QImage::Format_Grayscale8)
+	{
+		return (int32_t) FORMAT_GRAY;
+	}
+
+	if(_frame->format() == QImage::Format_RGB888)
+	{
+		return (int32_t) FORMAT_RGB;
+	}
+
+	return -1;
+}
+
+inline
+QCameraCapture::FramePtr& VideoFrame::frame()
+{
+	return _frame;
+}
+
+inline
+const QCameraCapture::FramePtr& VideoFrame::frame() const
+{
+	return _frame;
+}
+```
+</details>
+
+13. В методе `addFrame` подаем кадры в `VideoWorker`. Если при обработке коллбэков возникают исключения, они выбрасываются повторно в методе `checkExceptions`. Для хранения кадров заведем очередь `_frames`, в которую будем складывать id кадра и соответствующее изображение, чтобы в коллбэке `TrackingCallback` найти кадр, соответствующий результату обработки. Для синхронизации изменения общих данных также используются мьютексы `std::mutex`.
+
+**worker.h**
+```cpp
 #include <queue>
 ...
 class Worker : public QObject
@@ -1071,7 +1210,10 @@ class Worker : public QObject
         std::mutex _frames_mutex;
         ...
 };
-worker.cpp
+```
+
+**worker.cpp**
+```cpp
 #include "videoframe.h"
 ...
 void Worker::addFrame(
@@ -1087,9 +1229,12 @@ void Worker::addFrame(
     _video_worker->checkExceptions();
     _frames.push(std::make_pair(frame_id, video_frame.frame()));
 }
-Модифицируем метод getDataToDraw, чтобы не рисовать лица, для которых был вызван TrackingLostCallback.
+```
 
-worker.cpp
+14. Модифицируем метод `getDataToDraw`, чтобы не рисовать лица, для которых был вызван `TrackingLostCallback`.
+
+**worker.cpp**
+```cpp
 void Worker::getDataToDraw(DrawingData &data)
 {
     ...
@@ -1111,9 +1256,12 @@ void Worker::getDataToDraw(DrawingData &data)
         }
     ...
 }
-Модифицируем класс QCameraCapture для перехвата исключений, которые могут возникнуть в Worker::addFrame.
+```
 
-qcameracapture.cpp
+15. Модифицируем класс `QCameraCapture` для перехвата исключений, которые могут возникнуть в `Worker::addFrame`.
+
+**qcameracapture.cpp**
+```cpp
 #include <QMessageBox>
 ...
 void QCameraCapture::frameUpdatedSlot(
@@ -1146,13 +1294,82 @@ void QCameraCapture::frameUpdatedSlot(
     }
     ...
 }
-Создадим класс DrawFunction, который будет содержать метод для отрисовки результатов трекинга на изображении: Add New > C++ > C++ Class > Choose… > Class name – DrawFunction.
+```
 
-drawfunction.h
-drawfunction.cpp
-В конструкторе ViewWindow передаем указатель на объект FacerecService и имя конфигурационного файла модуля трекинга при создании Worker. В методе Draw рисуем результаты трекинга на изображении через вызов DrawFunction::Draw.
+16. Создадим класс `DrawFunction`, который будет содержать метод для отрисовки результатов трекинга на изображении: **Add New > C++ > C++ Class > Choose… > Class name – DrawFunction**.
 
-viewwindow.cpp
+**drawfunction.h**
+```cpp
+#include "worker.h"
+
+class DrawFunction
+{
+public:
+	DrawFunction();
+
+	static QImage Draw(
+		const Worker::DrawingData &data);
+};
+```
+
+**drawfunction.cpp**
+```cpp
+#include "drawfunction.h"
+#include <QPainter>
+
+DrawFunction::DrawFunction()
+{
+}
+
+// static
+QImage DrawFunction::Draw(
+	const Worker::DrawingData &data)
+{
+	QImage result = data.frame->copy();
+
+	QPainter painter(&result);
+
+	// Клонируем информацию о лицах 
+	std::vector<std::pair<int, Worker::FaceData> > faces_data(data.faces.begin(), data.faces.end());
+
+	// Рисуем лица 
+	for(const auto &face_data : faces_data)
+	{
+		const Worker::FaceData &face = face_data.second;
+
+		painter.save();
+
+		// Визуализация лица в кадре 
+		if(face.frame_id == data.frame_id && !face.lost)
+		{
+			const pbio::RawSample& sample = *face.sample;
+			QPen pen;
+
+			// Отрисовка ограничивающего прямоугольника лица 
+			{
+				// Получаем ограничивающий прямоугольник лица 
+				const pbio::RawSample::Rectangle bounding_box = sample.getRectangle();
+
+				pen.setWidth(3);
+				pen.setColor(Qt::green);
+				painter.setPen(pen);
+				painter.drawRect(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
+			}
+		}
+
+		painter.restore();
+	}
+
+	painter.end();
+
+	return result;
+}
+```
+
+17. В конструкторе `ViewWindow` передаем указатель на объект `FacerecService` и имя конфигурационного файла модуля трекинга при создании `Worker`. В методе `Draw` рисуем результаты трекинга на изображении через вызов `DrawFunction::Draw`.
+
+**viewwindow.cpp**
+```cpp
 #include "drawfunction.h"
 ...
 ViewWindow::ViewWindow(...) :
@@ -1172,5 +1389,10 @@ void ViewWindow::draw()
     const QImage image = DrawFunction::Draw(data);
     ...
 }
-Запустите проект. Теперь на изображении с камеры детектятся и отслеживаются лица (они выделяются зеленым прямугольником). Больше информации об использовании объекта VideoWorker вы можете найти в разделе Обработка видеопотока.
-first_1.png
+```
+
+18. Запустите проект. Теперь на изображении с камеры детектятся и отслеживаются лица (они выделяются зеленым прямугольником). Больше информации об использовании объекта `VideoWorker` вы можете найти в разделе [Обработка видеопотока](../development/video_stream_processing.md).
+
+<p align="center">
+<img width="600" src="../img/first_1.png"><br>
+</p>
