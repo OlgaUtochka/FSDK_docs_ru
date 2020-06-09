@@ -12,20 +12,31 @@
 
 ## Создаем проект Qt
 
-Запускаем Qt и создаем новый проект: File > New File or Project > Application > Qt Widgets Application > Choose...
+1. Запускаем Qt и создаем новый проект: **File > New File or Project > Application > Qt Widgets Application > Choose...**
 
-first_2.png
-Называем проект, например, 1_detection_and_tracking_with_video_worker, и выбираем путь. Кликаем Next, в разделе Kit Selection выбираем платформу для приложения, например, Desktop. Кликаем Details и отмечаем конфигурацию сборки Release (Debug в данном проекте нам не понадобится).
-В окне Class Information оставляем настройки по умолчанию, кликаем Next, в окне Project Management также оставляем настройки по умолчанию и кликаем Finish.
-Дадим заголовок главному окну приложения: в дереве проекта открываем двойным кликом файл Forms > mainwindow.ui. В правой части редактора во вкладке свойств указываем название окна: windowTitle > Face SDK Tracking.
+<p align="center">
+<img width="600" src="../img/first_2.png"><br>
+</p>
 
-first_3.png
-Для выравнивания виджетов по сетке перенесем на виджет окна MainWindow объект Grid Layout. Вызываем у виджета MainWindow контекстное меню правым кликом и выбираем Layout > Lay Out in a Grid. Объект Grid Layout должен растянуться по размерам виджета MainWindow. Изменим имя Layout > layoutName > viewLayout.
+2. Называем проект, например, *detection_and_tracking_with_video_worker*, и выбираем путь. Кликаем **Next**, в разделе **Kit Selection** выбираем платформу для приложения, например, **Desktop**. Кликаем **Details** и отмечаем конфигурацию сборки **Release** (**Debug** в данном проекте нам не понадобится).
+3. В окне **Class Information** оставляем настройки по умолчанию, кликаем **Next**, в окне **Project Management** также оставляем настройки по умолчанию и кликаем **Finish**.
+4. Дадим заголовок главному окну приложения: в дереве проекта открываем двойным кликом файл **Forms > mainwindow.ui**. В правой части редактора во вкладке свойств указываем название окна: **windowTitle > Face SDK Tracking**.
 
-first_4.png
-Запускаем проект, кликнув Run (Ctrl+R). На экране должно появиться пустое окно с заголовком Face SDK Tracking.
+<p align="center">
+<img width="300" src="../img/first_3.png"><br>
+</p>
 
-first_5.png
+5. Для выравнивания виджетов по сетке перенесем на виджет окна **MainWindow** объект **Grid Layout**. Вызываем у виджета **MainWindow** контекстное меню правым кликом и выбираем **Layout > Lay Out in a Grid**. Объект **Grid Layout** должен растянуться по размерам виджета **MainWindow**. Изменим имя **Layout > layoutName > viewLayout**.
+
+<p align="center">
+<img width="300" src="../img/first_4.png"><br>
+</p>
+
+6. Запускаем проект, кликнув **Run** (Ctrl+R). На экране должно появиться пустое окно с заголовком **Face SDK Tracking**.
+
+<p align="center">
+<img width="330" src="../img/first_5.png"><br>
+</p>
 
 ## Выводим изображение с камеры
 
