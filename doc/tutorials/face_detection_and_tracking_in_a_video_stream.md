@@ -40,15 +40,19 @@
 
 ## Выводим изображение с камеры
 
-Для того, чтобы мы могли использовать в проекте камеру, нам нужно подключить мультимедийные виджеты Qt. Для этого добавляем в pro-файл проекта строку:
+1. Для того, чтобы мы могли использовать в проекте камеру, нам нужно подключить мультимедийные виджеты Qt. Для этого добавляем в pro-файл проекта строку:
 
-detection_and_tracking_with_video_worker.pro
+**detection_and_tracking_with_video_worker.pro**
+```cpp
 ...
 QT  += multimedia multimediawidgets
 ...
-Создадим новый класс QCameraCapture для получения изображения с камеры: Add New > C++ > C++ Class > Choose… > Class name – QCameraCapture > Base class – QObject > Next > Project Management (настройки по умолчанию) > Finish. В заголовочном файле qcameracapture.h создаем класс CameraSurface, который будет предоставлять кадры с камеры через коллбэк-функцию present.
+```
 
-qcameracapture.h
+2. Создадим новый класс `QCameraCapture` для получения изображения с камеры: **Add New > C++ > C++ Class > Choose… > Class name – QCameraCapture > Base class – QObject > Next > Project Management** (настройки по умолчанию) **> Finish**. В заголовочном файле `qcameracapture.h` создаем класс `CameraSurface`, который будет предоставлять кадры с камеры через коллбэк-функцию `present`.
+
+**qcameracapture.h**
+```cpp
 #include <QCamera>
 #include <QAbstractVideoSurface>
 #include <QVideoSurfaceFormat>
@@ -65,9 +69,12 @@ class CameraSurface : public QAbstractVideoSurface
     signals:
         void frameUpdatedSignal(const QVideoFrame&);
 };
-Описываем реализацию класса в файле qcameracapture.cpp. Определяем конструктор CameraSurface::CameraSurface и метод supportedPixelFormats. В методе CameraSurface::supportedPixelFormats перечисляем форматы, поддерживаемые Face SDK (RGB24, BGR24, NV12, NV21). Изображение с некоторых камер приходит в формате RGB32, поэтому мы также указываем его в списке. Этот формат не поддерживается Face SDK, поэтому далее мы оформим преобразование изображения формата RGB32 в формат RGB24.
+```
 
-qcameracapture.cpp
+3. Описываем реализацию класса в файле `qcameracapture.cpp`. Определяем конструктор `CameraSurface::CameraSurface` и метод `supportedPixelFormats`. В методе `CameraSurface::supportedPixelFormats` перечисляем форматы, поддерживаемые Face SDK (RGB24, BGR24, NV12, NV21). Изображение с некоторых камер приходит в формате RGB32, поэтому мы также указываем его в списке. Этот формат не поддерживается Face SDK, поэтому далее мы оформим преобразование изображения формата RGB32 в формат RGB24.
+
+**qcameracapture.cpp**
+```cpp
 #include "qcameracapture.h"
 ...
 CameraSurface::CameraSurface(QObject* parent) :
@@ -88,9 +95,12 @@ QList<QVideoFrame::PixelFormat> CameraSurface::supportedPixelFormats(
         }
         return QList<QVideoFrame::PixelFormat>();
 }
-В методе CameraSurface::start проверяем формат изображения. Запускаем камеру, если формат поддерживается, иначе обрабатываем ошибку.
+```
 
-qcameracapture.cpp
+4. В методе `CameraSurface::start` проверяем формат изображения. Запускаем камеру, если формат поддерживается, иначе обрабатываем ошибку.
+
+**qcameracapture.cpp**
+```cpp
 ...
 bool CameraSurface::start(const QVideoSurfaceFormat& format)
 {
@@ -101,9 +111,12 @@ bool CameraSurface::start(const QVideoSurfaceFormat& format)
     }
     return QAbstractVideoSurface::start(format);
 }
-В методе CameraSurface::present обрабатываем новый кадр. Если кадр прошел проверку, то посылается сигнал обновления кадра frameUpdatedSignal. Далее с этим сигналом будет связан слот frameUpdatedSlot, где кадр будет обработан.
+```
 
-qcameracapture.cpp
+5. В методе `CameraSurface::present` обрабатываем новый кадр. Если кадр прошел проверку, то посылается сигнал обновления кадра `frameUpdatedSignal`. Далее с этим сигналом будет связан слот `frameUpdatedSlot`, где кадр будет обработан.
+
+**qcameracapture.cpp**
+```cpp
 ...
 bool CameraSurface::present(const QVideoFrame& frame)
 {
@@ -114,9 +127,12 @@ bool CameraSurface::present(const QVideoFrame& frame)
     emit frameUpdatedSignal(frame);
     return true;
 }
-Конструктор класса QCameraCapture принимает указатель на родительский виджет (parent), id камеры и разрешение изображения (ширина и высота), которые будут сохранены в соответствующие поля класса.
+```
 
-qcameracapture.h
+6. Конструктор класса `QCameraCapture` принимает указатель на родительский виджет (`parent`), id камеры и разрешение изображения (ширина и высота), которые будут сохранены в соответствующие поля класса.
+
+**qcameracapture.h**
+```cpp
 class QCameraCapture : public QObject
 {
     Q_OBJECT
@@ -133,9 +149,12 @@ class QCameraCapture : public QObject
         int res_width;
         int res_height;
 }
-Добавляем в класс QCameraCapture объекты камеры m_camera и m_surface.
+```
 
-qcameracapture.h
+7. Добавляем в класс `QCameraCapture` объекты камеры `m_camera` и `m_surface`.
+
+**qcameracapture.h**
+```cpp
 #include <QScopedPointer>
 class QCameraCapture : public QObject
 {
@@ -145,9 +164,12 @@ class QCameraCapture : public QObject
         QScopedPointer<QCamera> m_camera;
         QScopedPointer<CameraSurface> m_surface;
 };
-Подключаем заголовочный файл stdexcept в файле qcameracapture.cpp для генерации исключений. В списке инициализации конструктора QCameraCapture::QCameraCapture сохраняем указатель на родительский виджет, id камеры и разрешение изображения. В теле конструктора получаем список доступных камер. Список камер должен содержать хотя бы одну камеру, в противном случае будет выброшено исключение runtime_error. Также проверяем, что камера с запрашиваемым id есть в списке. Создаем камеру и подключаем сигналы камеры к слотам-обработчикам объекта. При изменении статуса камера посылает сигнал statusChanged. Создаем объект CameraSurface для отрисовки кадров с камеры. Подключаем сигнал CameraSurface::frameUpdatedSignal к слоту QCameraCapture::frameUpdatedSlot.
+```
 
-qcameracapture.cpp
+8. Подключаем заголовочный файл `stdexcept` в файле `qcameracapture.cpp` для генерации исключений. В списке инициализации конструктора `QCameraCapture::QCameraCapture` сохраняем указатель на родительский виджет, id камеры и разрешение изображения. В теле конструктора получаем список доступных камер. Список камер должен содержать хотя бы одну камеру, в противном случае будет выброшено исключение `runtime_error`. Также проверяем, что камера с запрашиваемым id есть в списке. Создаем камеру и подключаем сигналы камеры к слотам-обработчикам объекта. При изменении статуса камера посылает сигнал `statusChanged`. Создаем объект `CameraSurface` для отрисовки кадров с камеры. Подключаем сигнал `CameraSurface::frameUpdatedSignal` к слоту `QCameraCapture::frameUpdatedSlot`.
+
+**qcameracapture.cpp**
+```cpp
 #include <QCameraInfo>
 #include <stdexcept>
 ...
@@ -183,9 +205,12 @@ res_height(res_height)
     m_camera->setViewfinder(m_surface.data());
     connect(m_surface.data(), &CameraSurface::frameUpdatedSignal, this, &QCameraCapture::frameUpdatedSlot);
 }
-В деструкторе QCameraCapture останавливаем камеру.
+```
 
-qcameracapture.h
+9. В деструкторе `QCameraCapture` останавливаем камеру.
+
+**qcameracapture.h**
+```cpp
 class QCameraCapture : public QObject
 {
     ...
@@ -193,7 +218,10 @@ class QCameraCapture : public QObject
     virtual ~QCameraCapture();
     ...
 }
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 QCameraCapture::~QCameraCapture()
 {
     if (m_camera)
@@ -201,9 +229,12 @@ QCameraCapture::~QCameraCapture()
         m_camera->stop();
     }
 }
-Добавляем метод QCameraCapture::frameUpdatedSlot ‒ обработчик сигнала CameraSurface::frameUpdatedSignal. В этом методе мы конвертируем объект QVideoFrame в QImage и отправляем сигнал о том, что доступен новый кадр. Создаем FramePtr – указатель на изображение. Если изображение получено в формате RGB32, преобразуем его в RGB888.
+```
 
-qcameracapture.h
+10. Добавляем метод `QCameraCapture::frameUpdatedSlot` ‒ обработчик сигнала `CameraSurface::frameUpdatedSignal`. В этом методе мы конвертируем объект `QVideoFrame` в `QImage` и отправляем сигнал о том, что доступен новый кадр. Создаем `FramePtr` – указатель на изображение. Если изображение получено в формате RGB32, преобразуем его в RGB888.
+
+**qcameracapture.h**
+```cpp
 #include <memory>
 class QCameraCapture : public QObject
 {
@@ -218,7 +249,10 @@ class QCameraCapture : public QObject
         void frameUpdatedSlot(const QVideoFrame&);
         ...
 }
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 void QCameraCapture::frameUpdatedSlot(
     const QVideoFrame& frame)
 {
@@ -242,9 +276,12 @@ void QCameraCapture::frameUpdatedSlot(
     cloneFrame.unmap();
     emit newFrameAvailable();
 }
-Добавляем методы запуска (start) и остановки (stop) камеры QCameraCapture.
+```
 
-qcameracapture.h
+11. Добавляем методы запуска (`start`) и остановки (`stop`) камеры `QCameraCapture`.
+
+**qcameracapture.h**
+```cpp
 class QCameraCapture : public QObject
 {
     ...
@@ -254,7 +291,10 @@ class QCameraCapture : public QObject
         void stop();
         ...
 }
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 void QCameraCapture::start()
 {
     m_camera->start();
@@ -263,9 +303,12 @@ void QCameraCapture::stop()
 {
     m_camera->stop();
 }
-В методе QCameraCapture::onStatusChanged обрабатываем изменение статуса камеры на LoadedStatus. Проверяем, поддерживает ли камера запрашиваемое разрешение. Устанавливаем запрашиваемое разрешение, если оно поддерживается камерой, иначе устанавливается разрешение по умолчанию (640 x 480), заданное статическими полями класса default_res_width, default_res_height.
+```
 
-qcameracapture.h
+12. В методе `QCameraCapture::onStatusChanged` обрабатываем изменение статуса камеры на `LoadedStatus`. Проверяем, поддерживает ли камера запрашиваемое разрешение. Устанавливаем запрашиваемое разрешение, если оно поддерживается камерой, иначе устанавливается разрешение по умолчанию (640 x 480), заданное статическими полями класса `default_res_width`, `default_res_height`.
+
+**qcameracapture.h**
+```cpp
 class QCameraCapture {
         ...
     private slots:
@@ -276,7 +319,10 @@ class QCameraCapture {
         static const int default_res_height;
         ...
 }
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 const int QCameraCapture::default_res_width = 640;
 const int QCameraCapture::default_res_height = 480;
 ...
@@ -308,9 +354,12 @@ void QCameraCapture::onStatusChanged()
             m_camera->setViewfinderSettings(viewFinderSettings);
     }
 }
-В методе cameraError выводим сообщение об ошибках камеры, если они возникают.
+```
 
-qcameracapture.h
+13. В методе `cameraError` выводим сообщение об ошибках камеры, если они возникают.
+
+**qcameracapture.h**
+```cpp
 class QCameraCapture : public QObject
 {
     ...
@@ -319,14 +368,20 @@ class QCameraCapture : public QObject
         void cameraError();
     ...
 }
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 void QCameraCapture::cameraError()
 {
     qDebug() << "Camera error: " << m_camera->errorString();
 }
-Создаем новый класс Worker: Add New > C++ > C++ Class > Choose… > Class name - Worker > Next > Finish. Класс Worker через метод addFrame будет сохранять последний кадр с камеры и отдавать этот кадр через метод getDataToDraw.
+```
 
-worker.h
+14. Создаем новый класс `Worker`: **Add New > C++ > C++ Class > Choose… > Class name - Worker > Next > Finish**. Класс `Worker` через метод `addFrame` будет сохранять последний кадр с камеры и отдавать этот кадр через метод `getDataToDraw`.
+
+**worker.h**
+```cpp
 #include "qcameracapture.h"
 #include <mutex>
 class Worker
@@ -348,7 +403,10 @@ class Worker
         DrawingData _drawing_data;
         std::mutex _drawing_data_mutex;
 };
-worker.cpp
+```
+
+**worker.cpp**
+```cpp
 void Worker::getDataToDraw(DrawingData &data)
 {
     const std::lock_guard<std::mutex> guard(_drawing_data_mutex);
@@ -361,16 +419,25 @@ void Worker::addFrame(QCameraCapture::FramePtr frame)
     _drawing_data.frame = frame;
     _drawing_data.updated = true;
 }
-Отображение кадров будет выполняться в классе ViewWindow. Создаем виджет ViewWindow: Add > New > Qt > Designer Form Class > Choose... > Template > Widget (настройки по умолчанию) > Next > Name – ViewWindow > Project Management (настройки по умолчанию) > Finish.
-В редакторе (Design) перетаскиваем на виджет объект Grid Layout: вызываем у виджета ViewWindow контекстное меню правым кликом и выбираем Lay out > Lay Out in a Grid. Объект Grid Layout позволяет размещать виджеты в сетке, он растягивается по размерам виджета ViewWindow. Далее добавляем на gridLayout объект Label и на панели свойств задаем ему имя frame: QObject > objectName > frame.
+```
 
-first_6.png
-Удаляем текст по умолчанию в QLabel > text.
+15. Отображение кадров будет выполняться в классе `ViewWindow`. Создаем виджет **ViewWindow: Add > New > Qt > Designer Form Class > Choose... > Template > Widget** (настройки по умолчанию) **> Next > Name – ViewWindow > Project Management (настройки по умолчанию) > Finish**.
+16. В редакторе (**Design**) перетаскиваем на виджет объект **Grid Layout**: вызываем у виджета **ViewWindow** контекстное меню правым кликом и выбираем **Lay out > Lay Out in a Grid**. Объект **Grid Layout** позволяет размещать виджеты в сетке, он растягивается по размерам виджета **ViewWindow**. Далее добавляем на **gridLayout** объект **Label** и на панели свойств задаем ему имя **frame: QObject > objectName > frame**.
 
-first_7.png
-В класс ViewWindow добавляем камеру _qCamera и инициализируем ее в конструкторе. Через статические поля camera_image_width и camera_image_height задаем требуемое разрешение изображения 1280x720. Флаг _running хранит состояние запуска камеры: true - камера запущена, false - не запущена (остановлена).
+<p align="center">
+<img width="300" src="../img/first_6.png"><br>
+</p>
 
-viewwindow.h
+17. Удаляем текст по умолчанию в **QLabel > text**.
+
+<p align="center">
+<img width="300" src="../img/first_7.png"><br>
+</p>
+
+18. В класс `ViewWindow` добавляем камеру `_qCamera` и инициализируем ее в конструкторе. Через статические поля `camera_image_width` и `camera_image_height` задаем требуемое разрешение изображения 1280x720. Флаг `_running` хранит состояние запуска камеры: `true` - камера запущена, `false` - не запущена (остановлена).
+
+**viewwindow.h**
+```cpp
 #include "qcameracapture.h"
 #include <QWidget>
 namespace Ui {
@@ -389,7 +456,10 @@ class ViewWindow : public QWidget
         QScopedPointer<QCameraCapture> _qCamera;
         bool _running;
 };
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 const int ViewWindow::camera_image_width = 1280;
 const int ViewWindow::camera_image_height = 720;
 ViewWindow::ViewWindow(QWidget *parent) :
@@ -404,9 +474,12 @@ ui(new Ui::ViewWindow())
         camera_image_width,
         camera_image_height));
 }
-Добавляем в класс ViewWindow объект Worker и инициализируем его в конструкторе.
+```
 
-viewwindow.h
+19. Добавляем в класс `ViewWindow` объект `Worker` и инициализируем его в конструкторе.
+
+**viewwindow.h**
+```cpp
 #include "worker.h"
 class ViewWindow : public QWidget
 {
@@ -415,7 +488,10 @@ class ViewWindow : public QWidget
         ...
         std::shared_ptr<Worker> _worker;
 };
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 ViewWindow::ViewWindow(QWidget *parent) :
 QWidget(parent),
 ui(new Ui::ViewWindow())
@@ -424,9 +500,12 @@ ui(new Ui::ViewWindow())
     _worker = std::make_shared<Worker>();
     ...
 }
-Кадры будут подаваться в Worker из QCameraCapture. Модифицируем классы QCameraCapture и ViewWindow.
+```
 
-qcameracapture.h
+20. Кадры будут подаваться в `Worker` из `QCameraCapture`. Модифицируем классы `QCameraCapture` и `ViewWindow`.
+
+**qcameracapture.h**
+```cpp
 ...
 class Worker;
 class QCameraCapture : public QObject
@@ -444,7 +523,10 @@ class QCameraCapture : public QObject
         std::shared_ptr<Worker> _worker;
     ...
 };
-qcameracapture.cpp
+```
+
+**qcameracapture.cpp**
+```cpp
 #include "worker.h"
 ...
 QCameraCapture::QCameraCapture(
@@ -465,7 +547,10 @@ void QCameraCapture::frameUpdatedSlot(
     }
 ...
 }
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 ViewWindow::ViewWindow(QWidget *parent) :
 QWidget(parent),
 ui(new Ui::ViewWindow())
@@ -476,9 +561,12 @@ ui(new Ui::ViewWindow())
         _worker,
         ...));
 }
-Сигнал о появлении нового кадра QCameraCapture::newFrameAvailable обрабатывается в слоте ViewWindow::draw, который выводит изображение с камеры на виджет кадров.
+```
 
-viewwindow.h
+21. Сигнал о появлении нового кадра `QCameraCapture::newFrameAvailable` обрабатывается в слоте `ViewWindow::draw`, который выводит изображение с камеры на виджет кадров.
+
+**viewwindow.h**
+```cpp
 class ViewWindow : public QWidget
 {
     ...
@@ -486,7 +574,10 @@ class ViewWindow : public QWidget
         void draw();
     ...
 }
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 ViewWindow::ViewWindow(QWidget *parent) :
 QWidget(parent),
 ui(new Ui::ViewWindow())
@@ -507,9 +598,12 @@ void ViewWindow::draw()
     const QImage image = data.frame->copy();
     ui->frame->setPixmap(QPixmap::fromImage(image));
 }
-В методе runProcessing запускаем камеру, в методе stopProcessing – останавливаем.
+```
 
-viewwindow.h
+22. В методе `runProcessing` запускаем камеру, в методе `stopProcessing` – останавливаем.
+
+**viewwindow.h**
+```cpp
 class ViewWindow : public QWidget
 {
     public:
@@ -518,7 +612,10 @@ class ViewWindow : public QWidget
     void stopProcessing();
     ...
 }
-viewwindow.cpp
+```
+
+**viewwindow.cpp**
+```cpp
 void ViewWindow::stopProcessing()
 {
     if (!_running)
@@ -533,17 +630,23 @@ void ViewWindow::runProcessing()
     _qCamera->start();
     _running = true;
 }
-Останавливаем камеру в деструкторе ~ViewWindow.
+```
 
-viewwindow.cpp
+23. Останавливаем камеру в деструкторе `~ViewWindow`.
+
+**viewwindow.cpp**
+```cpp
 ViewWindow::~ViewWindow()
 {
     stopProcessing();
     delete ui;
 }
-Подключаем виджет камеры к главному окну приложения: создаем окно просмотра и запускаем обработку в конструкторе MainWindow. В деструкторе ~MainWindow останавливаем обработку.
+```
 
-mainwindow.h
+24. Подключаем виджет камеры к главному окну приложения: создаем окно просмотра и запускаем обработку в конструкторе `MainWindow`. В деструкторе `~MainWindow` останавливаем обработку.
+
+**mainwindow.h**
+```cpp
 ...
 class ViewWindow;
 class MainWindow : public QMainWindow
@@ -553,7 +656,10 @@ class MainWindow : public QMainWindow
         Ui::MainWindow *ui;
         QScopedPointer<ViewWindow> _view;
 };
-mainwindow.cpp
+```
+
+**mainwindow.cpp**
+```cpp
 #include "viewwindow.h"
 #include <QMessageBox>
 MainWindow::MainWindow(QWidget *parent) :
@@ -585,9 +691,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 ...
-Модифицируем функцию main для перехвата возможных исключений.
+```
 
-main.cpp
+25. Модифицируем функцию `main` для перехвата возможных исключений.
+
+**main.cpp**
+```cpp
 #include <QDebug>
 int main(int argc, char *argv[])
 {
@@ -608,12 +717,15 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-Запустите проект. Должно появиться окно с изображением с камеры.
+```
 
-Заметки
-При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи QImage::mirrored().
+26. Запустите проект. Должно появиться окно с изображением с камеры.
 
-first_8.png
+_**Примечание:** При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи QImage::mirrored()._
+
+<p align="center">
+<img width="600" src="../img/first_8.png"><br>
+</p>
 
 ## Детектим и отслеживаем лица на видео
 
