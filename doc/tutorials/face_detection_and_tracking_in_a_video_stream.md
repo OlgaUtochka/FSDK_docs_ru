@@ -421,7 +421,7 @@ void Worker::addFrame(QCameraCapture::FramePtr frame)
 }
 ```
 
-15. Отображение кадров будет выполняться в классе `ViewWindow`. Создаем виджет **ViewWindow: Add > New > Qt > Designer Form Class > Choose... > Template > Widget** (настройки по умолчанию) **> Next > Name – ViewWindow > Project Management (настройки по умолчанию) > Finish**.
+15. Отображение кадров будет выполняться в классе `ViewWindow`. Создаем виджет **ViewWindow: Add > New > Qt > Designer Form Class > Choose... > Template > Widget** (настройки по умолчанию) **> Next > Name – ViewWindow > Project Management** (настройки по умолчанию) **> Finish**.
 16. В редакторе (**Design**) перетаскиваем на виджет объект **Grid Layout**: вызываем у виджета **ViewWindow** контекстное меню правым кликом и выбираем **Lay out > Lay Out in a Grid**. Объект **Grid Layout** позволяет размещать виджеты в сетке, он растягивается по размерам виджета **ViewWindow**. Далее добавляем на **gridLayout** объект **Label** и на панели свойств задаем ему имя **frame: QObject > objectName > frame**.
 
 <p align="center">
@@ -721,7 +721,7 @@ int main(int argc, char *argv[])
 
 26. Запустите проект. Должно появиться окно с изображением с камеры.
 
-_**Примечание:** При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи `QImage::mirrored()`._
+_**Примечание:** При запуске проекта на Windows с некоторыми камерами изображение может перевернуто или отзеркалено, это связано с особенностями обработки изображений Qt. В этом случае Вам потребуется дополнительно обработать изображение, например, при помощи [QImage::mirrored()](https://doc.qt.io/qt-5/qimage.html)._
 
 <p align="center">
 <img width="600" src="../img/first_8.png"><br>
@@ -1110,7 +1110,7 @@ void Worker::TrackingLostCallback(
 **videoframe.h**
 
 <details>
-  <summary>Click to expand</summary>
+  <summary>Нажмите, чтобы развернуть</summary>
 	
 ```cpp
 #include "qcameracapture.h"
