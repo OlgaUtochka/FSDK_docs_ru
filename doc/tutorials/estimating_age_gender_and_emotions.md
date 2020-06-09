@@ -111,7 +111,7 @@ const QPoint base_point = QPoint(rectangle.x + rectangle.width + margin_from_rec
 
 ## Определяем эмоции
 
-Используя метод `pbio::FacerecService::createEmotionsEstimator`, создаем объект `EmotionsEstimator` для определения эмоций. При вызове этого метода необходимо указать конфигурационный файл `emotions_estimator.xml`.
+1. Используя метод `pbio::FacerecService::createEmotionsEstimator`, создаем объект `EmotionsEstimator` для определения эмоций. При вызове этого метода необходимо указать конфигурационный файл `emotions_estimator.xml`.
 
 **main.cpp**
 ```cpp
