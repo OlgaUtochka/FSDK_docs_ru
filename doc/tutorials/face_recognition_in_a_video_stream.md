@@ -553,9 +553,10 @@ void Worker::MatchFoundCallback(
 
 ## Отображение превью распознанного лица из базы
 
-Для удобства восприятия добавим отображение фото и имени человека из базы рядом с лицом на видеопотоке. В файле drawfunction.h добавляем ссылку на базу лиц, поскольку она потребуется при отрисовке результатов распознавания.
+1. Для удобства восприятия добавим отображение фото и имени человека из базы рядом с лицом на видеопотоке. В файле `drawfunction.h` добавляем ссылку на базу лиц, поскольку она потребуется при отрисовке результатов распознавания.
 
-drawfunction.h
+**drawfunction.h**
+```cpp
 #include "database.h"
 class DrawFunction
 {
@@ -565,9 +566,12 @@ public:
         const Worker::DrawingData &data,
         const Database &database);
 };
-В файле drawfunction.cpp модифицируем функцию DrawFunction::Draw, передав в нее базу лиц.
+```
 
-drawfunction.cpp
+2. В файле `drawfunction.cpp` модифицируем функцию `DrawFunction::Draw`, передав в нее базу лиц.
+
+**drawfunction.cpp**
+```cpp
 // static
 QImage DrawFunction::Draw(
     const Worker::DrawingData &data,
@@ -577,9 +581,12 @@ QImage DrawFunction::Draw(
     const pbio::RawSample& sample = *face.sample;
     QPen pen;
 }
-Сохраняем ограничивающий прямоугольник лица в структуре pbio::RawSample::Rectangle. Передаем его параметры (x, y, ширина, высота) объекту QRect rect.
+```
 
-drawfunction.cpp
+3. Сохраняем ограничивающий прямоугольник лица в структуре `pbio::RawSample::Rectangle`. Передаем его параметры (x, y, ширина, высота) объекту `QRect rect`.
+
+**drawfunction.cpp**
+```cpp
 QImage DrawFunction::Draw(...)
 {
     ...
@@ -587,9 +594,12 @@ QImage DrawFunction::Draw(...)
     const pbio::RawSample::Rectangle bounding_box = sample.getRectangle();
     QRect rect(bounding_box.x, bounding_box.y, bounding_box.width, bounding_box.height);
 }
-Создаем булеву переменную recognized, которая будет обозначать, распознано лицо или не распознано. Если лицо распознано, ограничивающий прямоугольник будет зеленого цвета, если нет – красного.
+```
 
-drawfunction.cpp
+4. Создаем булеву переменную `recognized`, которая будет обозначать, распознано лицо или не распознано. Если лицо распознано, ограничивающий прямоугольник будет зеленого цвета, если нет – красного.
+
+**drawfunction.cpp**
+```cpp
 QImage DrawFunction::Draw(...)
 {
     ...
@@ -605,9 +615,12 @@ QImage DrawFunction::Draw(...)
         painter.drawRect(rect);
     }
 }
-По номеру face.match_database_index получаем изображение из базы для превью. Рассчитываем положение превью в кадре.
+```
 
-drawfunction.cpp
+5. По номеру `face.match_database_index` получаем изображение из базы для превью. Рассчитываем положение превью в кадре.
+
+**drawfunction.cpp**
+```cpp
 QImage DrawFunction::Draw(...)
 {
     ...
@@ -620,9 +633,12 @@ QImage DrawFunction::Draw(...)
                 rect.x() + rect.width() + pen.width(),
                 rect.top());
 }
-Рисуем на превью изображение из базы. Создаем объект QImage face_preview, который больше по высоте, чем thumbnail на text_bar_height. В позиции (0, 0) рисуется исходное изображение превью. В результате мы получаем превью с черным прямоугольником в нижней части, в котором выводится имя человека. Зададим параметры шрифта, рассчитаем положение надписи и отобразим текст на превью.
+```
 
-drawfunction.cpp
+6. Рисуем на превью изображение из базы. Создаем объект `QImage face_preview`, который больше по высоте, чем `thumbnail` на `text_bar_height`. В позиции (0, 0) рисуется исходное изображение превью. В результате мы получаем превью с черным прямоугольником в нижней части, в котором выводится имя человека. Зададим параметры шрифта, рассчитаем положение надписи и отобразим текст на превью.
+
+**drawfunction.cpp**
+```cpp
 QImage DrawFunction::Draw(...)
 {
     ...
@@ -648,9 +664,12 @@ QImage DrawFunction::Draw(...)
         }
     }
 }
-Отрисовываем превью face_preview на кадре, используя метод drawPixmap.
+```
 
-drawfunction.cpp
+7. Отрисовываем превью `face_preview` на кадре, используя метод `drawPixmap`.
+
+**drawfunction.cpp**
+```cpp
 // static
 QImage DrawFunction::Draw(...)
 {
@@ -665,9 +684,12 @@ QImage DrawFunction::Draw(...)
         painter.drawPixmap(preview_pos, pixmap);
     }
 }
-В файл worker.h добавляем метод, возвращающий ссылку на базу лиц.
+```
 
-worker.h
+8. В файл `worker.h` добавляем метод, возвращающий ссылку на базу лиц.
+
+**worker.h**
+```cpp
 class Worker
 {
 public:
@@ -678,15 +700,22 @@ public:
         return _database;
     }
 };
-Модифицируем вызов функции DrawFunction::Draw, передав в нее базу лиц.
+```
 
-viewwindow.cpp
+9. Модифицируем вызов функции `DrawFunction::Draw`, передав в нее базу лиц.
+
+**viewwindow.cpp**
+```cpp
 void ViewWindow::draw()
 {
     ...
     const QImage image = DrawFunction::Draw(data, _worker->getDatabase());
     ui->frame->setPixmap(QPixmap::fromImage(image));
 }
-Запускаем проект. Если лицо распознано, оно будет выделяться зеленым прямоугольником, и справа от него будет отображаться уменьшенная копия фото из базы и имя. Нераспознанные лица будут выделяться красным прямоугольником.
+```
 
-fourth_2.png
+10. Запускаем проект. Если лицо распознано, оно будет выделяться зеленым прямоугольником, и справа от него будет отображаться уменьшенная копия фото из базы и имя. Нераспознанные лица будут выделяться красным прямоугольником.
+
+<p align="center">
+<img width="600" src="../img/fourth_2.png"><br>
+</p>
