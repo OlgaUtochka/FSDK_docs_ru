@@ -8,7 +8,7 @@
 * путь до каталога *conf/facerec*
 * пути до входных изображений
 
-Пример запуска из каталога bin:
+Пример запуска из каталога *bin*:
 
 * Linux: `./test_facecut ../lib/libfacerec.so ../conf/facerec set1/01100.jpg`
 * Windows: `test_facecut facerec.dll ../conf/facerec set1/01100.jpg`
