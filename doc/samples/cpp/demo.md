@@ -36,6 +36,6 @@
 * `dll_path` – путь до файла библиотеки `libfacerec.so` или `facerec.dll`
 * `license_dir` – путь до каталога с лицензией; укажите, если нужно изменить каталог по умолчанию `license`
 
-Исходный код: [cpp/demo/demo.cpp](../../../examples/cpp/demo/demo.cpp)
+Исходный код: [demo.cpp](../../../examples/cpp/demo/demo.cpp)
 
 Для сборки требуется библиотека OpenCV.
