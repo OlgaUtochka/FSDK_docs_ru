@@ -155,7 +155,7 @@ _**Примечание:** Узнайте, как отобразить антр�
 
 <table border="1" style="border-collapse:collapse;center">
 <tr>                <th rowspan=2> конфигурационный файл                                         </th>    <th colspan=6>время детекции (мс) </th> </tr>
-<tr>                                                                                            <th>640x480, 1 face</th> <th>640x480, 4 faces</th> <th>1280x720, 1 лицо</th> <th>1280x720, 4 лица</th> <th>1920x1080, 1 лицо</th> <th>1920x1080, 4 лица</th>  </tr>
+<tr>                                                                                            <th>640x480, 1 лицо</th> <th>640x480, 4 лица</th> <th>1280x720, 1 лицо</th> <th>1280x720, 4 лица</th> <th>1920x1080, 1 лицо</th> <th>1920x1080, 4 лица</th>  </tr>
 <tr align="center"> <td align="left"> common_capturer4_fda.xml                              </td>    <td>55            </td> <td>140             </td> <td>150             </td> <td>260              </td> <td>300             </td> <td>530              </td>  </tr>
 <tr align="center"> <td align="left"> common_video_capturer_fda.xml                             </td>    <td>40            </td> <td>80             </td> <td>40             </td> <td>80              </td> <td>50             </td> <td>90              </td>  </tr>
 </table>
