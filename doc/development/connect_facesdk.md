@@ -87,7 +87,7 @@ int main (int argc, char** argv)
   <summary>Нажмите, чтобы развернуть</summary>
 
 ```cs
-  using System;
+using System;
 using VDT.FaceRecognition.SDK;
 namespace Example
 {
