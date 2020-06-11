@@ -46,7 +46,7 @@ final Capturer capturer = service.createCapturer(capturerConfig);
 ```
 </details>
 
-Example 3:
+Пример 3:
 
 **C++**
 
