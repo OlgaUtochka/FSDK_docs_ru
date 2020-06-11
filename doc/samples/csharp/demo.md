@@ -16,7 +16,7 @@
 <b>Результат запуска C# demo</b>
 </p>
 
-Для запуска приложения на Linux перейдите в директорию *bin/csharp_demos/demo* и выполните команду `run.sh <path_to_opencv_csharp>`, где `<path_to_opencv_csharp>` - путь до директории с библиотекой OpenCvSharp.
+Для запуска приложения на Linux перейдите в директорию *bin/csharp_demos/demo* и выполните команду `run.sh <path_to_opencv_csharp>`, где `<path_to_opencv_csharp>` – путь до директории с библиотекой OpenCvSharp.
 
 Также Вы можете запустить демонстрационную программу **C# demo**, указав определенные параметры (например, путь до онлайн лицензии).
 
@@ -31,9 +31,9 @@ dotnet publish -o publish
 
 Где:
 
-* `config_dir` - путь до каталога *conf/facerec*
-* `capturer_config` - путь до конфигурационного файла детектора (подробнее о типах конфигурационных файлов см. [Класс Capturer](../../development/face_capturing.md#capturer-class-reference))
-* `license_dir` - путь до каталога с лицензией (укажите, если нужно изменить каталог по умолчанию `license`)
+* `config_dir` – путь до каталога *conf/facerec*
+* `capturer_config` – путь до конфигурационного файла детектора (подробнее о типах конфигурационных файлов см. [Класс Capturer](../../development/face_capturing.md#класс-capturer))
+* `license_dir` – путь до каталога с лицензией (укажите, если нужно изменить каталог по умолчанию `license`)
 
 **Для запуска демо на Windows:**  
 Добавьте путь до директории, содержащей `facerec.dll`, в преременную окружения `PATH`.
