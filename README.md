@@ -1,1 +1,0 @@
-# FSDK_docs_ru
