@@ -1,8 +1,8 @@
-# Введение
-
 <p align="center">
 <a href="https://face.3divi.com/ru"><img src="doc/img/3divi_logo.png" width="600" height="150" title="3DiVi Logo" alt="Logo"></a>
 </p>
+
+# Введение
 
 **3DiVi Face SDK** – это набор программных компонентов (библиотек) для разработки решений по распознаванию лиц любой сложности – от простых приложений до порталов, таких как Azure Face API или AWS Rekognition.
 
