@@ -111,6 +111,7 @@ VideoWorker video_worker = service.createVideoWorker(
 и два конфигурационных файла, использующие алгоритм трекинга из `fda_tracker_capturer.xml`:
 * `video_worker_fdatracker.xml` с набором точек *fda*
 * `video_worker_fdatracker_fake_detector.xml` с набором точек *fda*  
+
 (см. [Антропометрические точки](face_capturing.md#антропометрические-точки), [Класс Capturer](face_capturing.md#класс-capturer))
 
 В случае, если `VideoWorker` используется только для детекции лиц, указываются параметры `matching_thread=0` и `processing_thread=0`, и потребляется обычная лицензия [Face Detector](../components.md#facedetector). Для создания компонента *Face Detector* для одного потока необходимо указать параметр `streams_count=1`.
