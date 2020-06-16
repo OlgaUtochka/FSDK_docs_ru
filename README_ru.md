@@ -75,10 +75,10 @@ Face SDK включает в себя следующие API:
 
 # Лицензии свободного ПО
 
-* OpenSSL (https://www.openssl.org)
-* Crypto++ (https://www.cryptopp.com)
-* Boost (http://www.boost.org)
-* OpenCV (http://opencv.org)
+* [OpenSSL](doc/open_source_licenses/openssl.txt) (https://www.openssl.org)
+* [Crypto++](doc/open_source_licenses/crypto%2B%2B.txt) (https://www.cryptopp.com)
+* [Boost](doc/open_source_licenses/boost.txt) (http://www.boost.org)
+* [OpenCV](doc/open_source_licenses/opencv.txt) (http://opencv.org)
 
 <div align="center">© All Rights Reserved. <a href="https://3divi.com/">3DiVi Inc.</a></div>
 <div align="center"><a href="mailto: face@3divi.com">face@3divi.com</a></div>
