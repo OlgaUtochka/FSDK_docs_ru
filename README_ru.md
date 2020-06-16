@@ -80,5 +80,5 @@ Face SDK включает в себя следующие API:
 * Boost (http://www.boost.org)
 * OpenCV (http://opencv.org)
 
-<div align="center">© Все права защищены. <a href="https://3divi.com/">3DiVi Inc.</a></div>
+<div align="center">© All Rights Reserved. <a href="https://3divi.com/">3DiVi Inc.</a></div>
 <div align="center"><a href="mailto: face@3divi.com">face@3divi.com</a></div>
