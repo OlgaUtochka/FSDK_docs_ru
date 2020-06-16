@@ -406,6 +406,6 @@ find -type f | sort > ../lfw_simple_format.txt
     random_templates.bin
 ```
 
-Результаты работы утилиты: бинарный файл со случайными шаблонами, такого же формата, как и в режиме processing
+Результаты работы утилиты: бинарный файл со случайными шаблонами, такого же формата, как и в режиме `processing`
 
 Исходный код: [examples/cpp/test_sdk](../examples/cpp/test_sdk)
