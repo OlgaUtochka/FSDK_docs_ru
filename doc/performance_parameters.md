@@ -162,3 +162,224 @@
 <tr align="center"> <th> 2e-7 </th>  <td> 11.8 </td>  <td> 22.2 </td>  <td> 24.5 </td>  <td> 33.9 </td>  <td> 45.5 </td>  <td> 63.0 </td>  <td> 67.3 </td>  <td> 70.0 </td>  <td> 78.3 </td>  <td> 81.2 </td>  <td> 83.2 </td>  <td> 85.4 </td>  <td> 91.4 </td>  <td> 92.4 </td> <td> 86.9 </td> <td> 94.7 </td> <td> 97.7 </td> </tr>
 <tr align="center"> <th> 1e-7 </th>  <td> 06.6 </td>  <td> 18.7 </td>  <td> 17.6 </td>  <td> 31.1 </td>  <td> 44.5 </td>  <td> 59.0 </td>  <td> 66.0 </td>  <td> 68.5 </td>  <td> 77.8 </td>  <td> 78.7 </td>  <td> 81.5 </td>  <td> 80.8 </td>  <td> 88.9 </td>  <td> 90.6 </td> <td> 85.6 </td> <td> 89.6 </td> <td> 97.3 </td> </tr>
 </table>
+
+## Тест производительности
+
+Режимы:
+* [Детекция](#детекция)
+* [Процессинг](#процессинг)
+* [Тест распознавания 1:1](#тест-распознавания-11)
+* [Тест скорости поиска](#тест-скорости-поиска)
+* [Конвертация конфигурационного файла](#конвертация-конфигурационного-файла)
+
+### Детекция
+
+В этом режиме программа детектирует лица в базе изображений c id в промежутке `[begin_image_id, end_image_id)`. Каждое изображение должно содержать только одно лицо. Изображения, на которых будет детектировано больше одного лица, будут проигнорированы.
+
+Параметры запуска:
+* `mode` - режим программы (`detection`)
+* `dll_path` - путь до файла библиотеки `libfacerec.so` или `facerec.dll`
+* `sdk_config_dir` - путь до каталога *conf/facerec*
+* `dataset_config` - конфигурационный файл базы изображений (см. [Конвертация конфигурационного файла](#конвертация-конфигурационного-файла))
+* `capturer_config` - имя конфигурационного файла детектора
+* `dataset_root_dir` - путь до базы данных
+* `detection_result_file` - файл для хранения результатов детекции
+* `[begin_image_id]` - индекс изображения, с которого начинается детекция (по умолчанию `0`)
+* `[end_image_id]` - индекс изображения, до которого осуществляется детекция (по умолчанию выполняется обработка до конца файла)
+* `[use_cpu_cores_count]` - количество используемых ядер для детекции (по умолчанию `1`)
+
+Пример запуска из каталога *bin*:
+
+```cpp
+./test_sdk \
+    --mode detection \
+    --dll_path ../lib/libfacerec.so \
+    --sdk_config_dir ../conf/facerec \
+    --capturer_config common_capturer4_lbf.xml \
+    --dataset_config dataset_config.txt \
+    --dataset_root_dir /path/to/data \
+    --detection_result_file detection_result.txt \
+```
+    
+Результаты детекции: текстовый файл со строками в формате: `<image_id> <количество_точек> <задетектированные_точки>`
+
+Процессинг
+В этом режиме программа создает шаблоны детектированных лиц, обнаруженных на изображениях с id в промежутке [begin_image_id, end_image_id).
+
+Параметры запуска:
+
+mode - режим программы (processing)
+dll_path - путь до файла библиотеки libfacerec.so или facerec.dll
+sdk_config_dir - путь до каталога conf/facerec
+dataset_config - конфигурационный файл базы изображений (см. Конвертация конфигурационного файла)
+dataset_root_dir - путь до базы данных
+recognizer_config - имя конфигурационного файла распознавателя
+processing_result_file - файл для сохранения результирующих шаблонов
+[begin_image_id] - индекс изображения, с которого начинается процессинг (по умолчанию 0)
+[end_image_id] - индекс изображения, до которого осуществляется процессинг (по умолчанию обработка выполняется до конца файла)
+[use_cpu_cores_count] - количество используемых ядер для процессинга (по умолчанию 1)
+FILES - файл(ы) хранящие результат детекции
+Пример запуска из каталога bin:
+
+./test_sdk \
+    --mode processing \
+    --dll_path ../lib/libfacerec.so \
+    --sdk_config_dir ../conf/facerec \
+    --dataset_config dataset_config.txt \
+    --dataset_root_dir /path/to/data \
+    --recognizer_config method6v7_recognizer.xml \
+    --processing_result_file ./templates_6v7.bin \
+    detection_result.txt
+Результаты процессинга:
+
+бинарный файл, содержащий по одной записи на шаблон; каждая запись содержит 64-битное беззнаковое целое число (image_id) и шаблон (см. cpp/test_sdk/src/processing.cpp)
+Тест распознавания 1:1
+В этом режиме программа выполняет тест распознавания 1:1, используя шаблоны, сгенерированные на изображениях из промежутка [begin_image_id, end_image_id).
+
+Параметры запуска:
+
+mode - режим программы (recognition_test_11)
+dll_path - путь до файла библиотеки libfacerec.so или facerec.dll
+sdk_config_dir - путь до каталога conf/facerec
+dataset_config - конфигурационный файл базы изображений (см. Конвертация конфигурационного файла)
+recognizer_config - имя конфигурационного файла распознавателя
+result_roc_file - файл для сохранения ROC-кривой
+result_closest_mismatches_file - файл для сохранения ближайших ложных пар
+[begin_image_id] - индекс первого изображения, используемого в тесте (по умолчанию 0)
+[end_image_id] - индекс первого изображения после begin_image_id, не используемого в тесте (по умолчанию используются все начиная с begin_image_id до конца файла)
+[use_cpu_cores_count] - количество используемых ядер для теста (по умолчанию 1)
+FILES - файл(ы) с шаблонами (результаты c шага процессинга)
+Пример запуска из каталога bin:
+
+./test_sdk \
+    --mode recognition_test_11 \
+    --dll_path ../lib/libfacerec.so \
+    --sdk_config_dir ../conf/facerec \
+    --dataset_config dataset_config.txt \
+    --recognizer_config method6v7_recognizer.xml \
+    --result_roc_file ./roc11_6v7.txt \
+    --result_closest_mismatches_file ./closest_mismatches_file.txt \
+    templates_6v7.bin
+Результаты теста:
+
+result_roc_file - текстовый файл с ROC-кривой; строка файла описывает точку кривой в формате: <far> <tar> <distance>
+result_closest_mismatches_file - текстовый файл со строками вида: <distance> <image_id1> <image_id2> <path_to_image1> <path_to_image2>.
+Этот файл содержит пары изображений, размеченных как принадлежащие разным людям, но имеющие минимальное расстояние между шаблонами. Рекомендуется сгенерировать этот файл с лучшим распознавателем и просмотреть изображения из первых записей, чтобы проверить ошибки разметки набора данных.
+Тест распознавания 1:N
+В этом режиме программа выполняет тест распознавания 1:N, используя шаблоны, сгенерированные на изображениях из промежутка [begin_image_id, end_image_id).
+
+Launch parameters:
+
+mode - режим программы (recognition_test_1N)
+dll_path - путь до файла библиотеки libfacerec.so или facerec.dll
+sdk_config_dir - путь до каталога conf/facerec
+dataset_config - конфигурационный файл базы изображений (см. Конвертация конфигурационного файла)
+recognizer_config - имя конфигурационного файла распознавателя
+result_roc_file - файл для сохранения ROC-кривой
+[begin_image_id] - индекс первого изображения, используемого в тесте (по умолчанию 0)
+[end_image_id] - индекс первого изображения после begin_image_id, не используемого в тесте (по умолчанию используются все начиная с begin_image_id до конца файла)
+[use_cpu_cores_count] - количество используемых ядер для теста (по умолчанию 1)
+[acceleration] - тип ускорения поиска (по умолчанию 0):
+0 - поиск с помощью pbio::Recognizer::search с типом ускорения pbio::Recognizer::SearchAccelerationType::NO_SEARCH_ACCELERATION;
+1 - поиск с помощью pbio::Recognizer::search с типом ускорения pbio::Recognizer::SearchAccelerationType::SEARCH_ACCELERATION_1;
+-1 - поиск с помощью pbio::Recognizer::verifyMatch в один поток (не зависит от search_threads_count)
+FILES - файл(ы) с шаблонами (результаты c шага процессинга)
+Пример запуска из каталога bin:
+
+./test_sdk \
+    --mode recognition_test_1N \
+    --dll_path ../lib/libfacerec.so \
+    --sdk_config_dir ../conf/facerec \
+    --dataset_config dataset_config.txt \
+    --recognizer_config method6v7_recognizer.xml \
+    --result_roc_file ./roc1N_6v7.txt \
+    --acceleration 1 \
+    templates_6v7.bin
+Результат теста - текстовый файл с ROC-кривой; строка файла описывает точку кривой в формате: <far> <tar> <distance>
+
+Тест скорости поиска
+В этом режиме программа выполняет тест скорости поиска, используя шаблоны, которые были сгенерированы в режиме processing или с помощью утилиты (см. Генератор шаблонов).
+
+Параметры запуска:
+
+mode - режим программы (search_speed_test)
+dll_path - путь до файла библиотеки libfacerec.so или facerec.dll
+sdk_config_dir - путь до каталога conf/facerec
+recognizer_config - имя конфигурационного файла распознавателя
+[templates_count] - количество используемых шаблонов (по умолчанию обработка выполняется до конца файла)
+[queries_count] - количество запросов (по умолчанию 1)
+[query_k_nearest] - количество ближайших шаблонов для поиска (по умолчанию 1)
+[search_threads_count] - количество потоков, используемых во время поиска (по умолчанию 1)
+[acceleration] - тип ускорения поиска (по умолчанию 0):
+0 - поиск с помощью pbio::Recognizer::search с типом ускорения pbio::Recognizer::SearchAccelerationType::NO_SEARCH_ACCELERATION;
+1 - поиск с помощью pbio::Recognizer::search с типом ускорения pbio::Recognizer::SearchAccelerationType::SEARCH_ACCELERATION_1;
+-1 - поиск с помощью pbio::Recognizer::verifyMatch в один поток (не зависит от search_threads_count)
+FILES - файл(ы) с шаблонами, полученными из режима processing или с помощью утилиты
+Пример запуска из каталога bin:
+
+./test_sdk \
+    --mode search_speed_test \
+    --dll_path ../lib/libfacerec.so \
+    --sdk_config_dir ../conf/facerec \
+    --recognizer_config method6v7_recognizer.xml \
+    templates.bin
+Результаты теста:
+
+сообщение с результатами тестирования
+Конвертация конфигурационного файла
+В этом режиме программа преобразовывает конфигурационный файл формата1 в формат2 (используется в остальных режимах):
+
+формат1 - текстовый файл со строками вида: <path/to/person/dir/image_file>. Изображения с одинаковыми path/to/person/dir принадлежат одному человеку. Изображения для одного человека должны идти подряд.
+Пример:
+person1_dir/image1
+person1_dir/image2
+person2_dir/image1
+...
+формат2 - текстовый файл по 3 строки на одно изображение (<person_id> <image_id> <path_to_image>).
+Пример:
+person0_id
+image0_id
+path_to_image0
+person0_id
+image1_id
+path_to_image1
+...
+Параметры запуска:
+
+mode - режим программы (convert_config_format)
+result_dataset_config - конфигурационный файл базы изображений
+FILE - один файл с данными в формате1
+Пример запуска:
+
+./test_sdk \
+    --mode convert_config_format \
+    --result_dataset_config dataset_config.txt \
+    lfw_simple_format.txt
+Результаты конвертации:
+
+конфигурационный файл базы изображений
+Формирование конфигурационного файла
+Пример создания конфигурационного файла базы данных формата1:
+
+find -type f | sort > ../lfw_simple_format.txt
+Пути в конфигурационных файлах должны располагаться относительно директории, передаваемой через параметр dataset_root_dir
+
+Утилиты
+Генератор шаблонов
+Утилита для создания случайных шаблонов.
+
+Параметры запуска:
+
+recognizer_version - версия распознавателя (необходимо выбрать одну из [9v30, 9v300, 9v1000, 8v7, 8v6, 7v7, 7v6, 7v3, 7v2, 7, 6v7, 6v6, 6v5, 6v4, 6v3, 6v2, 6])
+templates_count - генерируемое количество шаблонов
+result_file - бинарный файл, в который сохраняются сгенерированные шаблоны
+Пример запуска:
+
+./template_generator \
+    6v7 \
+    100000 \
+    random_templates.bin
+Результаты работы утилиты:
+
+бинарный файл со случайными шаблонами, такого же формата, как и в режиме processing
+Исходный код:
