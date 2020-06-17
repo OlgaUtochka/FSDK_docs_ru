@@ -2,9 +2,9 @@
 
 Программа демонстрирует трекинг, детекцию и распознавание лиц из базы.
 
-Для быстрого запуска демо с параметрами по умолчанию и проверки распознавания лиц на Windows:
+Для быстрого запуска сэмпла с параметрами по умолчанию и проверки распознавания лиц на Windows:
 1. Создайте базу, которая будет использоваться при поиске лиц (см. п.1 подраздела [C++ Video Recognition Demo](../cpp/video_recognition_demo.md)).
-2. Для запуска демонстрационной программы перейдите в папку *bin/csharp_demo/video_recognition_demo* и двойным левым щелчком мыши запустите файл `run.bat`
+2. Для запуска сэмпла перейдите в папку *bin/csharp_demo/video_recognition_demo* и двойным левым щелчком мыши запустите файл `run.bat`
 
 <p align="center">
 <img width="450" src="../../img/video_rec_cs_bat.png"><br>
@@ -20,15 +20,15 @@
 
 Для запуска приложения на Linux перейдите в директорию *bin/csharp_demos/video_recognition_demo* и выполните команду `run.sh <path_to_opencv_csharp>`, где `<path_to_opencv_csharp>` – путь до директории с библиотекой *OpenCvSharp*.
 
-Также Вы можете запустить демонстрационную программу **C# video_recognition_demo**, указав определенные параметры.
+Также Вы можете запустить сэмпл **C# video_recognition_demo**, указав определенные параметры.
 
-Для сборки демо выполните следующие команды:
+Для сборки сэмпла выполните следующие команды:
 ```
 cd examples/csharp_demos/video_recognition_demo
 dotnet publish -o publish
 ```
 
-Для запуска демо укажите путь до библиотеки `csharp_video_recognition_demo.dll`, параметры запуска (необязательно) и видео-источник:
+Для запуска сэмпла укажите путь до библиотеки `csharp_video_recognition_demo.dll`, параметры запуска (необязательно) и видео-источник:
 ```
 dotnet csharp_video_recognition_demo.dll [OPTIONS] <video_source>...
 ```
