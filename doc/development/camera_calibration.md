@@ -15,7 +15,7 @@
 Примеры шаблонов:
 
 <p align="center">
-<img width="900" src="../img/calibration_patterns.png"><br>
+<img width="900" src="../img/calibration_patterns_ru.png"><br>
 </p>
 
 Полноразмерные изображения находятся в каталоге *share/calibration*.
