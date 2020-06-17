@@ -2,7 +2,7 @@
 
 В данном туториале Вы найдете информацию о том, как интегрировать Face SDK в базовое приложение в XCode. Созданное демо-приложение позволит оценить такие функции Face SDK, как инициализация работы с библиотекой *libfacerec* и определение антропометрических точек лица на фотографии.
 
-Готовый демо-проект вы можете найти в дистрибутиве Face SDK: [../../examples/tutorials/ios_minimal_project](../../examples/tutorials/ios_minimal_project)
+Готовый демо-проект вы можете найти в дистрибутиве Face SDK: [examples/tutorials/ios_minimal_project](../../examples/tutorials/ios_minimal_project)
 
 _**Примечание:** Минимальная поддерживаемая версия iOS – 11.4._
 
